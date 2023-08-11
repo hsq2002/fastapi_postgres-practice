@@ -1,4 +1,5 @@
 volumes:
+  # this is where the data will stored althoug the docker is restart
   fastapi-example-data:
     external: true
 services:
@@ -22,5 +23,6 @@ services:
       POSTGRES_DB: example
     ports:
       - "15432:5432"
+    # /var/lib/postgresql/data is where the data is stored inside the container in default
     volumes:
       - fastapi-example-data:/var/lib/postgresql/data
