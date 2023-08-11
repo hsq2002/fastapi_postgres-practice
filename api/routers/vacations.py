@@ -12,16 +12,18 @@ router=APIRouter()
 ## the depende will create instance of the VacationRepository
 def create_vacations(vacation:VacationIn,response:Response,repo:VacationRepository = Depends()):
     print(repo,'--repo--')
+    print(vacation,'----vacation-----')
 
     ## the response status is to alter the response status in the code
     # response.status_code=400
-
     ## this code will create the vacation and return the basemodel that is desired
     return repo.create(vacation)
 
 
 ## get all the vacation
-
-@router.get("/vacations",response_model=Union[VacationOut,Error])
+## "response_model=Union[list[VacationOut],Error])--> are not necesary, if this not stated it
+## it will only show that it will return string in the "response body"
+## how ever if we decide to put it ther it needs to be correct
+@router.get("/vacations",response_model=Union[list[VacationOut],Error])
 def get_all(repo:VacationRepository=Depends()):
     return repo.get_all()

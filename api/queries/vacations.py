@@ -75,7 +75,6 @@ class VacationRepository:
                 ## get a cursor(something to run SQL with)
                 with conn.cursor() as db:
                     ## Run Select statement
-                    print("test----")
                     result=db.execute(
                     """
                     SELECT id, name,from_date, to_date, thoughts
@@ -83,7 +82,24 @@ class VacationRepository:
                     ORDER BY from_date
                     """
                     )
+
+
+                    result=[]
+                    ## if you iterate db, it will list all the data that is
+                    ##stated depending on what u stated in cursor
                     for record in db:
                         print(record)
-        except Exception :
-            return {"mssg":"database cannot get all the vacations"}
+                        vacation=VacationOut(
+                            id=record[0],
+                            name=record[1],
+                            from_date=record[2],
+                            to_date=record[3],
+                            thoughts=record[4]
+                        )
+                        result.append(vacation)
+
+                    return result
+
+        ## e means state the problem
+        except Exception as e:
+            return {"mssg":f"{e}edatabase cannot get all the vacations"}
