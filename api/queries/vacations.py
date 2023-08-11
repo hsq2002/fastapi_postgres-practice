@@ -29,7 +29,6 @@ class VacationOut(BaseModel):
 
 class VacationRepository:
     def create(self,vacation:VacationIn):
-
         #connect the database
         #what this code does, it will create a connection
         # and makesure if exception thrown, it will give
@@ -59,12 +58,11 @@ class VacationRepository:
                 id=result.fetchone()[0]
                 ## every pydantic models has dic property in it
                 old_data=vacation.dict()
-
                 new_vacation=VacationOut(id=id,**old_data)
                 print(new_vacation,'--VacationOut--')
-
                 #Return new Data which is vacation out
                 return new_vacation
+
 
     ## this instance method will return all the data in the database
     def get_all(self) -> Union[Error,list[VacationOut]]:
@@ -82,8 +80,6 @@ class VacationRepository:
                     ORDER BY from_date
                     """
                     )
-
-
                     result=[]
                     ## if you iterate db, it will list all the data that is
                     ##stated depending on what u stated in cursor
@@ -99,7 +95,34 @@ class VacationRepository:
                         result.append(vacation)
 
                     return result
-
         ## e means state the problem
         except Exception as e:
             return {"mssg":f"{e}edatabase cannot get all the vacations"}
+
+        ## updatiing the vacations
+    def update(vacation_id,vacation)->Union[Error,VacationIn]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    result=db.execute(
+                        """
+                        UPDATE vacations
+                        SET name=%s
+                        ,   from_date=%s
+                        ,   to_date=%s
+                        ,   thoughts=%s
+                        where id=%s
+                        """,
+                        [
+                        vacation.name,
+                        vacation.from_date,
+                        vacation.to_date,
+                        vacation.thoughts,
+                        vacation_id
+                        ]
+                    )
+                    old_data=vacation.dict()
+                    return VacationOut(id=vacation_id,**old_data)
+
+        except Exception as e:
+            return {"mssg":f"cant update the vacation \n {e}"}

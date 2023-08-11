@@ -27,3 +27,12 @@ def create_vacations(vacation:VacationIn,response:Response,repo:VacationReposito
 @router.get("/vacations",response_model=Union[list[VacationOut],Error])
 def get_all(repo:VacationRepository=Depends()):
     return repo.get_all()
+
+## update a vacation
+@router.put("/vacations/{vacation_id:int}", response_model=Union[Error,VacationOut])
+def update_vacation(
+    vacation_id:int,
+    vacation:VacationIn,
+    repo:VacationRepository=Depends()
+    )->Union[Error,VacationOut]:
+        return VacationRepository.update(vacation_id=vacation_id,vacation=vacation)
