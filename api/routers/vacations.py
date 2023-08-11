@@ -36,3 +36,20 @@ def update_vacation(
     repo:VacationRepository=Depends()
     )->Union[Error,VacationOut]:
         return VacationRepository.update(vacation_id=vacation_id,vacation=vacation)
+
+# get a vacation by id
+@router.get("/vacations/{vacation_id:int}",response_model=Union[Error,VacationOut])
+def vacation_by_id(
+     response:Response,vacation_id:int,
+     repo:VacationRepository=Depends()
+     )->Union[Error,VacationOut]:
+    repo=repo.by_id(vacation_id)
+    if repo is None:
+         response.status_code=404
+    return repo
+
+@router.delete("/vacations/{vacation_id:int}",response_model=bool)
+def vacation_delete(vacation_id:int,
+    repo:VacationRepository=Depends()
+    )->bool:
+     return repo.delete(vacation_id)

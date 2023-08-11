@@ -99,6 +99,7 @@ class VacationRepository:
         except Exception as e:
             return {"mssg":f"{e}edatabase cannot get all the vacations"}
 
+
         ## updatiing the vacations
     def update(vacation_id,vacation)->Union[Error,VacationIn]:
         try:
@@ -126,3 +127,66 @@ class VacationRepository:
 
         except Exception as e:
             return {"mssg":f"cant update the vacation \n {e}"}
+
+
+    ## get a vacation with a specific id
+    def by_id(self,vacation_id):
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    result=db.execute(
+                        """
+                        SELECT id, name, from_date, to_date, thoughts
+                        FROM vacations
+                        WHERE id = %s
+                        """,
+                        [
+                            vacation_id
+                        ]
+                    )
+                    record=result.fetchone()
+                    if record==None:
+                        return None
+                    return self.db_to_vacation(record)
+        except Exception as e:
+            print(e)
+            return {'mssg':f'wrong id \n {e}'}
+
+
+    # create a function for delete:
+    def delete(self,vacation_id:int)->Union[Error,bool]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    result=db.execute(
+                        """
+                        DELETE FROM vacations
+                        WHERE id=%s
+                        """,
+                        [
+                            vacation_id
+                        ]
+                    )
+                    return True
+        except Exception as e:
+            print(e)
+            return {'mssg':f'wrong id \n {e}'}
+
+
+
+
+
+
+
+
+
+    ## creating a reusable db converter
+    def db_to_vacation(self,record):
+        vacation_out=VacationOut(
+            id=record[0],
+            name=record[1],
+            from_date=record[2],
+            to_date=record[3],
+            thoughts=record[4],
+        )
+        return vacation_out
