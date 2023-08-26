@@ -18,7 +18,6 @@ class VacationIn(BaseModel):
     to_date:date
     thoughts: Optional[str]
 
-
 class VacationOut(BaseModel):
     id:int
     name:str
@@ -171,14 +170,6 @@ class VacationRepository:
         except Exception as e:
             print(e)
             return {'mssg':f'wrong id \n {e}'}
-
-
-
-
-
-
-
-
 
     ## creating a reusable db converter
     def db_to_vacation(self,record):
